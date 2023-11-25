@@ -25,42 +25,45 @@ async function run() {
     try {
         // Connect the client to the server	(optional starting in v4.7)
         await client.connect();
-        const database = client.db("JobLancer")
+        const database = client.db("MetaMotion")
         const UserCollection = database.collection('User')
 
         //User 
-        app.post('/user', async (req, res) => {
+        app.post('/users', async (req, res) => {
             const user = req.body;
             console.log(user);
             const result = await UserCollection.insertOne(user)
             res.send(result)
         })
-        app.get('/user', async (req, res) => {
+        app.get('/users', async (req, res) => {
             const cursor = UserCollection.find()
             const result = await cursor.toArray()
             res.send(result)
         })
-        app.get('/user/:email', async (req, res) => {
-            const id = req.params.email
-            const query = { userFirebaseUid: id }
+        app.get('/users/:email', async (req, res) => {
+            const email = req.params.email
+            const query = { email: email }
             const result = await UserCollection.findOne(query)
             res.send(result)
         })
-        app.patch('/user/:email', async (req, res) => {
-            const id = req.params.email
+        app.patch('/users/:email', async (req, res) => {
+            const email = req.params.email
             const user = req.body;
-            const query = { userFirebaseUid: id }
-            if (!query) {
+            const query = { email: email }
+            const isExist = await UserCollection.findOne(query)
+            if (!isExist) {
                 const result = await UserCollection.insertOne(user)
                 res.send(result)
             }
-            const UpdateUser = {
-                $set: {
-                    userLastSignInTime: req.body.userLastSignInTime
+            else {
+                const UpdateUser = {
+                    $set: {
+                        lastSignInTime: req.body.lastSignInTime,
+                    }
                 }
+                const result = await UserCollection.updateOne(query, UpdateUser)
+                res.send(result)
             }
-            const result = await UserCollection.updateOne(query, UpdateUser)
-            res.send(result)
         })
 
 
