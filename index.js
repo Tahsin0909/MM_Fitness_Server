@@ -58,7 +58,7 @@ async function run() {
             else {
                 const UpdateUser = {
                     $set: {
-                        lastSignInTime: req.body.lastSignInTime,
+                        lastSignInTime: user.lastSignInTime,
                     }
                 }
                 const result = await UserCollection.updateOne(query, UpdateUser)
