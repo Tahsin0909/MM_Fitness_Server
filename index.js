@@ -29,6 +29,7 @@ async function run() {
         const UserCollection = database.collection('User')
         const GalleryCollection = database.collection('Gallery')
         const AppliedCollection = database.collection('Applied_Trainer')
+        const TrainerCollection = database.collection('Trainer')
 
         //User 
         app.post('/users', async (req, res) => {
@@ -100,7 +101,24 @@ async function run() {
             const result = await cursor.toArray()
             res.send(result)
         })
-
+        app.delete('/appliedTrainer/:email', async (req, res) => {
+            const email = req.params.email
+            const query = {email: email}
+            const result = await AppliedCollection.deleteOne(query)
+            res.send(result)
+        })
+        //Traineer data
+        app.post('/trainer', async (req, res) => {
+            const data = req.body;
+            const result = await TrainerCollection.insertOne(data)
+            res.send(result)
+        })
+        app.get('/trainer', async (req, res) => {
+            const cursor = TrainerCollection.find()
+            const result = await cursor.toArray()
+            res.send(result) 
+        })
+        
 
 
         // Send a ping to confirm a successful connection
