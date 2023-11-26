@@ -28,6 +28,7 @@ async function run() {
         const database = client.db("MetaMotion")
         const UserCollection = database.collection('User')
         const GalleryCollection = database.collection('Gallery')
+        const AppliedCollection = database.collection('Applied_Trainer')
 
         //User 
         app.post('/users', async (req, res) => {
@@ -72,14 +73,32 @@ async function run() {
             const offset = parseInt(req.query.offset)
             const cursor = GalleryCollection.find()
             const galleryData = await cursor.toArray()
-            const paginate = (array, limit, offset)=> {
+            const paginate = (array, limit, offset) => {
                 const startIndex = offset;
                 const endIndex = offset + limit;
                 const paginatedData = array.slice(startIndex, endIndex);
                 return paginatedData;
             }
             const result = paginate(galleryData, limit, offset);
-            res.send(result )
+            res.send(result)
+        })
+        //Applied Trainer
+        app.post('/appliedTrainer', async (req, res) => {
+            const appliedData = req.body;
+            const query = { email: appliedData.email }
+            const isExist = await AppliedCollection.findOne(query)
+            if (isExist) {
+                res.send(isExist)
+            }
+            else {
+                const result = await AppliedCollection.insertOne(appliedData)
+                res.send(result)
+            }
+        })
+        app.get('/appliedTrainer', async (req, res) => {
+            const cursor = AppliedCollection.find()
+            const result = await cursor.toArray()
+            res.send(result)
         })
 
 
