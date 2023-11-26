@@ -27,6 +27,7 @@ async function run() {
         await client.connect();
         const database = client.db("MetaMotion")
         const UserCollection = database.collection('User')
+        const GalleryCollection = database.collection('Gallery')
 
         //User 
         app.post('/users', async (req, res) => {
@@ -65,7 +66,21 @@ async function run() {
                 res.send(result)
             }
         })
-
+        //Gallery
+        app.get('/gallery', async (req, res) => {
+            const limit = parseInt(req.query.limit);
+            const offset = parseInt(req.query.offset)
+            const cursor = GalleryCollection.find()
+            const galleryData = await cursor.toArray()
+            const paginate = (array, limit, offset)=> {
+                const startIndex = offset;
+                const endIndex = offset + limit;
+                const paginatedData = array.slice(startIndex, endIndex);
+                return paginatedData;
+            }
+            const result = paginate(galleryData, limit, offset);
+            res.send(result )
+        })
 
 
 
