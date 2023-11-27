@@ -104,7 +104,7 @@ async function run() {
         })
         app.delete('/appliedTrainer/:email', async (req, res) => {
             const email = req.params.email
-            const query = {email: email}
+            const query = { email: email }
             const result = await AppliedCollection.deleteOne(query)
             res.send(result)
         })
@@ -117,12 +117,18 @@ async function run() {
         app.get('/trainer', async (req, res) => {
             const cursor = TrainerCollection.find()
             const result = await cursor.toArray()
-            res.send(result) 
+            res.send(result)
+        })
+        app.get('/trainer/:email', async (req, res) => {
+            const email = req.params.email
+            const query = { email: email }
+            const result = await TrainerCollection.findOne(query)
+            res.send(result)
         })
         //Subscriber
         app.post('/subscriber', async (req, res) => {
             const data = req.body;
-            const query = {email: data.email}
+            const query = { email: data.email }
             const isExist = await SubscriberCollection.findOne(query)
             if (isExist) {
                 res.send(isExist)
@@ -135,9 +141,9 @@ async function run() {
         app.get('/subscriber', async (req, res) => {
             const cursor = SubscriberCollection.find()
             const result = await cursor.toArray()
-            res.send(result) 
+            res.send(result)
         })
-        
+
 
 
         // Send a ping to confirm a successful connection
