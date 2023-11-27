@@ -30,6 +30,7 @@ async function run() {
         const GalleryCollection = database.collection('Gallery')
         const AppliedCollection = database.collection('Applied_Trainer')
         const TrainerCollection = database.collection('Trainer')
+        const SubscriberCollection = database.collection('Subscriber')
 
         //User 
         app.post('/users', async (req, res) => {
@@ -107,7 +108,7 @@ async function run() {
             const result = await AppliedCollection.deleteOne(query)
             res.send(result)
         })
-        //Traineer data
+        //Trainer data
         app.post('/trainer', async (req, res) => {
             const data = req.body;
             const result = await TrainerCollection.insertOne(data)
@@ -115,6 +116,24 @@ async function run() {
         })
         app.get('/trainer', async (req, res) => {
             const cursor = TrainerCollection.find()
+            const result = await cursor.toArray()
+            res.send(result) 
+        })
+        //Subscriber
+        app.post('/subscriber', async (req, res) => {
+            const data = req.body;
+            const query = {email: data.email}
+            const isExist = await SubscriberCollection.findOne(query)
+            if (isExist) {
+                res.send(isExist)
+            }
+            else {
+                const result = await SubscriberCollection.insertOne(data)
+                res.send(result)
+            }
+        })
+        app.get('/subscriber', async (req, res) => {
+            const cursor = SubscriberCollection.find()
             const result = await cursor.toArray()
             res.send(result) 
         })
