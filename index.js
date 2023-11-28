@@ -32,6 +32,7 @@ async function run() {
         const TrainerCollection = database.collection('Trainer')
         const SubscriberCollection = database.collection('Subscriber')
         const ReviewCollection = database.collection('Review')
+        const ForumsCollection = database.collection('Forums')
 
         //User 
         app.post('/users', async (req, res) => {
@@ -153,6 +154,17 @@ async function run() {
         })
         app.get('/review', async (req, res) => {
             const cursor = ReviewCollection.find()
+            const result = await cursor.toArray()
+            res.send(result)
+        })
+        //Forums POst
+        app.post('/forums', async (req, res) => {
+            const data = req.body;
+            const result = await ForumsCollection.insertOne(data)
+            res.send(result)
+        })
+        app.get('/forums', async (req, res) => {
+            const cursor = ForumsCollection.find()
             const result = await cursor.toArray()
             res.send(result)
         })
