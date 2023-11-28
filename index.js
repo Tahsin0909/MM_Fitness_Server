@@ -119,8 +119,9 @@ async function run() {
             const result = await cursor.toArray()
             res.send(result)
         })
-        app.get('/trainer/:email', async (req, res) => {
-            const email = req.params.email
+        app.get('/trainerDetails', async (req, res) => {
+            const email = req.query.email
+            console.log(email);
             const query = { email: email }
             const result = await TrainerCollection.findOne(query)
             res.send(result)
