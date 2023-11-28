@@ -31,6 +31,7 @@ async function run() {
         const AppliedCollection = database.collection('Applied_Trainer')
         const TrainerCollection = database.collection('Trainer')
         const SubscriberCollection = database.collection('Subscriber')
+        const ReviewCollection = database.collection('Review')
 
         //User 
         app.post('/users', async (req, res) => {
@@ -144,7 +145,17 @@ async function run() {
             const result = await cursor.toArray()
             res.send(result)
         })
-
+        //Reviews
+        app.post('/review', async (req, res) => {
+            const data = req.body;
+            const result = await ReviewCollection.insertOne(data)
+            res.send(result)
+        })
+        app.get('/review', async (req, res) => {
+            const cursor = ReviewCollection.find()
+            const result = await cursor.toArray()
+            res.send(result)
+        })
 
 
         // Send a ping to confirm a successful connection
