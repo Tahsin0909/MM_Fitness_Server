@@ -177,18 +177,74 @@ async function run() {
             const Id = req.params.id
             console.log(Id);
             const data = req.body
-            const query = { _id: new ObjectId(Id), likes: { email: data.email }}
+            const query = { _id: new ObjectId(Id), likes: { email: data.email } }
+            const filter = { _id: new ObjectId(Id) }
             const isExist = await ForumsCollection.findOne(query)
             if (!isExist) {
-                const filter = { _id: new ObjectId(Id) }
-                const liked = {
-                    //change set to push
-                    $push: {
-                        likes: { email: data.email }
+                const query2 = { _id: new ObjectId(Id), dislikes: { email: data.email } }
+                const isExist2 = await ForumsCollection.findOne(query2)
+                if (isExist2) {
+                    const disliked = {
+                        $pull: {
+                            dislikes: { email: data.email }
+                        }
                     }
+                    const liked = {
+                        //change set to push
+                        $push: {
+                            likes: { email: data.email }
+                        }
+                    }
+                    const result = await ForumsCollection.updateOne(filter, liked)
+                    const result2 = await ForumsCollection.updateOne(filter, disliked)
+                    res.send(result2)
                 }
-                const result = await ForumsCollection.updateOne(filter, liked)
-                res.send(result)
+                else {
+                    const liked = {
+                        $push: {
+                            likes: { email: data.email }
+                        }
+                    }
+                    const result = await ForumsCollection.updateOne(filter, liked)
+                    res.send(result)
+                }
+            }
+        })
+        app.put('/disLikeForums/:id', async (req, res) => {
+            const Id = req.params.id
+            console.log(Id);
+            const data = req.body
+            const query = { _id: new ObjectId(Id), dislikes: { email: data.email } }
+            const filter = { _id: new ObjectId(Id) }
+            const isExist = await ForumsCollection.findOne(query)
+            if (!isExist) {
+                const query2 = { _id: new ObjectId(Id), likes: { email: data.email } }
+                const isExist2 = await ForumsCollection.findOne(query2)
+                if (isExist2) {
+                    const disliked = {
+                        $push: {
+                            dislikes: { email: data.email }
+                        }
+                    }
+                    const liked = {
+                        //change set to push
+                        $pull: {
+                            likes: { email: data.email }
+                        }
+                    }
+                    const result = await ForumsCollection.updateOne(filter, liked)
+                    const result2 = await ForumsCollection.updateOne(filter, disliked)
+                    res.send(result2)
+                }
+                else {
+                    const liked = {
+                        $push: {
+                            dislikes: { email: data.email }
+                        }
+                    }
+                    const result = await ForumsCollection.updateOne(filter, disliked)
+                    res.send(result)
+                }
 
             }
         })
