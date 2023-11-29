@@ -33,6 +33,7 @@ async function run() {
         const SubscriberCollection = database.collection('Subscriber')
         const ReviewCollection = database.collection('Review')
         const ForumsCollection = database.collection('Forums')
+        const ClassCollection = database.collection('Class')
 
         //User 
         app.post('/users', async (req, res) => {
@@ -245,6 +246,17 @@ async function run() {
                 }
 
             }
+        })
+        //Class
+        app.post('/class', async (req, res) => {
+            const data = req.body;
+            const result = await ClassCollection.insertOne(data)
+            res.send(result)
+        })
+        app.get('/class', async (req, res) => {
+            const cursor = ClassCollection.find()
+            const result = await cursor.toArray()
+            res.send(result)
         })
 
 
