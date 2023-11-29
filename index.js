@@ -3,7 +3,7 @@ const cors = require('cors');
 const port = process.env.PORT || 5000;
 require('dotenv').config()
 const app = express()
-const { MongoClient, ServerApiVersion } = require('mongodb');
+const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 
 //middleware
 app.use(cors())
@@ -123,7 +123,6 @@ async function run() {
         })
         app.get('/trainerDetails', async (req, res) => {
             const email = req.query.email
-            console.log(email);
             const query = { email: email }
             const result = await TrainerCollection.findOne(query)
             res.send(result)
@@ -167,6 +166,31 @@ async function run() {
             const cursor = ForumsCollection.find()
             const result = await cursor.toArray()
             res.send(result)
+        })
+        app.get('/forums/:id', async (req, res) => {
+            const id = req.params.id
+            const query = { _id: new ObjectId(id) }
+            const result = await ForumsCollection.findOne(query)
+            res.send(result)
+        })
+        app.put('/LikeForums/:id', async (req, res) => {
+            const Id = req.params.id
+            console.log(Id);
+            const data = req.body
+            const query = { _id: new ObjectId(Id), likes: { email: data.email }}
+            const isExist = await ForumsCollection.findOne(query)
+            if (!isExist) {
+                const filter = { _id: new ObjectId(Id) }
+                const liked = {
+                    //change set to push
+                    $push: {
+                        likes: { email: data.email }
+                    }
+                }
+                const result = await ForumsCollection.updateOne(filter, liked)
+                res.send(result)
+
+            }
         })
 
 
