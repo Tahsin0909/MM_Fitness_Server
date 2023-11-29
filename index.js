@@ -175,7 +175,6 @@ async function run() {
         })
         app.put('/LikeForums/:id', async (req, res) => {
             const Id = req.params.id
-            console.log(Id);
             const data = req.body
             const query = { _id: new ObjectId(Id), likes: { email: data.email } }
             const filter = { _id: new ObjectId(Id) }
@@ -212,7 +211,6 @@ async function run() {
         })
         app.put('/disLikeForums/:id', async (req, res) => {
             const Id = req.params.id
-            console.log(Id);
             const data = req.body
             const query = { _id: new ObjectId(Id), dislikes: { email: data.email } }
             const filter = { _id: new ObjectId(Id) }
@@ -237,7 +235,7 @@ async function run() {
                     res.send(result2)
                 }
                 else {
-                    const liked = {
+                    const disliked = {
                         $push: {
                             dislikes: { email: data.email }
                         }
