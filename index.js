@@ -258,6 +258,32 @@ async function run() {
             const result = await cursor.toArray()
             res.send(result)
         })
+        app.put('/class/:id', async (req, res) => {
+            const Id = req.params.id
+            const data = req.body;
+            const query = {
+                _id: new ObjectId(Id),
+                joinMember: {
+                    stdName: data.stdName,
+                    stdEmail: data.stdEmail,
+                    stdPhotoURL: data.stdPhotoURL,
+                }
+            }
+            const isExist = await ClassCollection.findOne(query)
+            if (!isExist) {
+                const Joined = {
+                    $push: {
+                        joinMember: {
+                            stdName: data.stdName,
+                            stdEmail: data.stdEmail,
+                            stdPhotoURL: data.stdPhotoURL,
+                        }
+                    }
+                }
+                const result = await ClassCollection.updateOne({ _id: new ObjectId(Id) }, Joined)
+                res.send(result)
+            }
+        })
 
 
         // Send a ping to confirm a successful connection
