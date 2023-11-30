@@ -115,6 +115,7 @@ async function run() {
         app.post('/trainer', async (req, res) => {
             const data = req.body;
             const result = await TrainerCollection.insertOne(data)
+            const PatchUser = await UserCollection.updateOne({ email: data.email }, { $set: { role: "trainer" } }, { upsert: true })
             res.send(result)
         })
         app.get('/trainer', async (req, res) => {
@@ -255,6 +256,13 @@ async function run() {
         })
         app.get('/class', async (req, res) => {
             const cursor = ClassCollection.find()
+            const result = await cursor.toArray()
+            res.send(result)
+        })
+        app.get('/class/:email', async (req, res) => {
+            const email = req.params.email
+            const query = {trainerEmail: email}
+            const cursor = ClassCollection.find(query)
             const result = await cursor.toArray()
             res.send(result)
         })
